@@ -5,6 +5,7 @@ local Todo = {}
 
 local commands = require('todo.commands')
 local setup = require('todo.setup')
+local utils = require('todo.utils')
 
 local is_setup_complete = false
 
@@ -16,7 +17,7 @@ Todo.setup = function (config)
     local filename =
         setup.config.dir .. '/' ..
         setup.config.todo_filename ..
-        setup.file_extensions[setup.config.todo_file_type]
+        utils.file_extensions[setup.config.todo_file_type]
     local file = io.open(filename, 'r')
     if file ~= nil then 
         file:close()
@@ -30,7 +31,7 @@ Todo.setup = function (config)
     end
     file = io.open(filename, 'w')
     io.output(file)
-    io.write(setup.file_headers[setup.config.todo_file_type])
+    io.write(utils.file_headers[setup.config.todo_file_type])
     file:close()
 end
 

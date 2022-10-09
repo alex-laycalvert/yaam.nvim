@@ -10,12 +10,13 @@ List.run = function ()
     local filename =
         setup.config.dir .. '/' ..
         setup.config.todo_filename ..
-        setup.file_extensions[setup.config.todo_file_type]
+        utils.file_extensions[setup.config.todo_file_type]
     for _, todo in pairs(utils.read_todos(filename)) do
         print('--------------------------------')
         print('Type:', todo.type)
         print('Name:', todo.name)
         print('Date:', todo.date)
+        print('Project:', todo.project)
         print('Details:')
         for _, detail in pairs(todo.details) do
             print('  -', detail)

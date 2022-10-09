@@ -1,12 +1,24 @@
 -- alex-laycalvert
 -- https://github.com/alex-laycalvert/todo.nvim
 
-local Utils = {}
+local Utils = {
+    file_extensions = {
+        markdown = '.md',
+    },
+    file_headers = {
+        markdown = '# TODOS',
+    },
+    matches = {
+        markdown = {
+            header = '^%- %[ %] *',
+            project = '^ +%- *Project: *',
+            detail = '^ +%- *',
+            task = '^ +%- *%[ %] *',
+        },
+    },
+}
 
-local TODO_HEADER = '^%- %[ %] *'
-local TODO_PROJECT = '^ +%- *Project: *'
-local TODO_DETAILS = '^ +%- *'
-local TODO_TASK = '^ +%- *%[ %] *'
+local setup = require('todo.setup')
 
 Utils.split = function (input_string, delim)
     if delim == nil then delim = '%s' end
@@ -29,6 +41,10 @@ Utils.read_lines = function (filename)
 end
 
 Utils.read_todos = function (filename)
+    local header_match = Utils.matches[setup.config.todo_file_type].header
+    local project_match = Utils.matches[setup.config.todo_file_type].project
+    local detail_match = Utils.matches[setup.config.todo_file_type].detail
+    local task_match = Utils.matches[setup.config.todo_file_type].task
     local contents = Utils.read_lines(filename)
     local todos = {}
     local current_todo = {
@@ -42,7 +58,7 @@ Utils.read_todos = function (filename)
     local num_spaces = 0
     local current_level = 0
     for _, line in pairs(contents) do
-        if line:find(TODO_HEADER) ~= nil then
+        if line:find(header_match) ~= nil then
             if current_todo.type ~= '' then
                 table.insert(todos, current_todo)
                 current_todo = {
@@ -55,25 +71,25 @@ Utils.read_todos = function (filename)
                 }
             end
             current_todo.type = line:
-                gsub(TODO_HEADER, ''):
+                gsub(header_match, ''):
                 gsub(' *:.*', '')
             current_todo.name = line:
-                gsub(TODO_HEADER, ''):
+                gsub(header_match, ''):
                 gsub(current_todo.type .. ': *', ''):
                 gsub('<.*>', '')
             current_todo.date = line:
-                gsub(TODO_HEADER, ''):
+                gsub(header_match, ''):
                 gsub(current_todo.type .. ': *', ''):
                 gsub(current_todo.name .. ' *', ''):
                 gsub('[<>]', '')
-        elseif line:find(TODO_PROJECT) ~= nil then
+        elseif line:find(project_match) ~= nil then
             current_todo.project = line:
-                gsub(TODO_PROJECT, '')
-        elseif line:find(TODO_TASK) ~= nil then
-            local task = line:gsub(TODO_TASK, '')
+                gsub(project_match, '')
+        elseif line:find(task_match) ~= nil then
+            local task = line:gsub(task_match, '')
             table.insert(current_todo.tasks, task)
-        elseif line:find(TODO_DETAILS) ~= nil then
-            local detail = line:gsub(TODO_DETAILS, '')
+        elseif line:find(detail_match) ~= nil then
+            local detail = line:gsub(detail_match, '')
             table.insert(current_todo.details, detail)
         end
     end

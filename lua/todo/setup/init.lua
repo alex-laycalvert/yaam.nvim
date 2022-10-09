@@ -5,12 +5,6 @@ local home = os.getenv('HOME')
 
 local Setup = {
     config = {},
-    file_extensions = {
-        markdown = '.md',
-    },
-    file_headers = {
-        markdown = '# TODOS',
-    },
     defaults = {
         dir = home,
         todo_filename = 'TODOS',
