@@ -4,6 +4,7 @@
 local List = {}
 
 local setup = require('todo.setup')
+local windows = require('todo.windows')
 local utils = require('todo.utils')
 
 List.run = function ()
@@ -11,22 +12,8 @@ List.run = function ()
         setup.config.dir .. '/' ..
         setup.config.todo_filename ..
         utils.file_extensions[setup.config.todo_file_type]
-    for _, todo in pairs(utils.read_todos(filename)) do
-        print('--------------------------------')
-        print('Type:', todo.type)
-        print('Name:', todo.name)
-        print('Date:', todo.date)
-        print('Project:', todo.project)
-        print('Details:')
-        for _, detail in pairs(todo.details) do
-            print('  -', detail)
-        end
-        print('Tasks:')
-        for _, task in pairs(todo.tasks) do
-            print('  -', task)
-        end
-        print('--------------------------------')
-    end
+    local todos = utils.read_todos(filename)
+    local win, buf = windows.open(10, 10)
 end
 
 return List
