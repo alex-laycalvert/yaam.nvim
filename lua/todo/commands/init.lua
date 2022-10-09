@@ -9,7 +9,8 @@ Commands.commands = {
     'edit',
     'delete',
     'calendar',
-    'projects'
+    'projects',
+    'help',
 }
 
 Commands.run = function (command)
