@@ -15,7 +15,7 @@ local Utils = {
             detail = '^ +%- *',
             task_incomplete = '^ +%- *%[ %] *',
             task_complete = '^ +%- *%[x%] *',
-            task_in_progress = '^ +%- *%[-%] *',
+            task_in_progress = '^ +%- *%[%-%] *',
             task_cancelled = '^ +%- *%[_%] *',
             task_urgent = '^ +%- *%[%!%] *',
         },
@@ -86,7 +86,19 @@ Utils.read_lines = function (filename)
     return lines
 end
 
-Utils.read_todos = function (filename)
+Utils.format_todo_title = function (todo, width)
+    local todo_lhs = Utils.concat_spaced(
+        todo.type, todo.name,
+        string.len(todo.name) + setup.max_type_length + 2
+    )
+    return Utils.concat_spaced(todo_lhs, todo.date, width)
+end
+
+Utils.read_todos = function ()
+    local filename =
+        setup.config.dir .. '/' ..
+        setup.config.todo_filename ..
+        Utils.file_extensions[setup.config.todo_file_type]
     local header_match = Utils.matches[setup.config.todo_file_type].header
     local project_match = Utils.matches[setup.config.todo_file_type].project
     local detail_match = Utils.matches[setup.config.todo_file_type].detail
@@ -132,40 +144,40 @@ Utils.read_todos = function (filename)
                 gsub(current_todo.type .. ': *', ''):
                 gsub(current_todo.name .. ' *', ''):
                 gsub('[<>]', '')
-        elseif line:find(project_match) ~= nil then
+        elseif line:find(project_match) ~= nil and current_todo.type ~= '' then
             current_todo.project = line:
                 gsub(project_match, '')
-        elseif line:find(task_incomplete_match) ~= nil then
+        elseif line:find(task_incomplete_match) ~= nil and current_todo.type ~= '' then
             local task = line:gsub(task_incomplete_match, '')
             table.insert(current_todo.tasks, {
                 name = task,
                 status = 'INCOMPLETE'
             })
-        elseif line:find(task_complete_match) ~= nil then
+        elseif line:find(task_complete_match) ~= nil and current_todo.type ~= '' then
             local task = line:gsub(task_complete_match, '')
             table.insert(current_todo.tasks, {
                 name = task,
                 status = 'COMPLETE'
             })
-        elseif line:find(task_in_progress_match) ~= nil then
+        elseif line:find(task_in_progress_match) ~= nil and current_todo.type ~= '' then
             local task = line:gsub(task_in_progress_match, '')
             table.insert(current_todo.tasks, {
                 name = task,
                 status = 'IN_PROGRESS'
             })
-        elseif line:find(task_cancelled_match) ~= nil then
+        elseif line:find(task_cancelled_match) ~= nil and current_todo.type ~= '' then
             local task = line:gsub(task_cancelled_match, '')
             table.insert(current_todo.tasks, {
                 name = task,
                 status = 'CANCELLED'
             })
-        elseif line:find(task_urgent_match) ~= nil then
+        elseif line:find(task_urgent_match) ~= nil and current_todo.type ~= '' then
             local task = line:gsub(task_urgent_match, '')
             table.insert(current_todo.tasks, {
                 name = task,
                 status = 'URGENT'
             })
-        elseif line:find(detail_match) ~= nil then
+        elseif line:find(detail_match) ~= nil and current_todo.type ~= '' then
             local detail = line:gsub(detail_match, '')
             table.insert(current_todo.details, detail)
         end
@@ -191,7 +203,20 @@ Utils.buf_write_todo = function (buf, todo, title)
         table.insert(lines, ' Tasks:')
     end
     for _, v in pairs(todo.tasks) do
-        table.insert(lines, ' - [ ] ' .. v)
+        local task = '  ['
+        if v.status == 'INCOMPLETE' then
+            task = task .. ' '
+        elseif v.status == 'COMPLETE' then
+            task = task .. 'x'
+        elseif v.status == 'IN_PROGRESS' then
+            task = task .. '-'
+        elseif v.status == 'CANCELLED' then
+            task = task .. '_'
+        elseif v.status == 'URGENT' then
+            task = task .. '!'
+        end
+        task = task .. '] ' .. v.name
+        table.insert(lines, task)
     end
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 end

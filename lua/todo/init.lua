@@ -19,7 +19,7 @@ Todo.setup = function (config)
         setup.config.todo_filename ..
         utils.file_extensions[setup.config.todo_file_type]
     local file = io.open(filename, 'r')
-    if file ~= nil then 
+    if file ~= nil then
         file:close()
         return
     end
@@ -30,6 +30,10 @@ Todo.setup = function (config)
         return
     end
     file = io.open(filename, 'w')
+    if file == nil then
+        print('Error: failed to create todo file for writing ' .. filename)
+        return
+    end
     io.output(file)
     io.write(utils.file_headers[setup.config.todo_file_type])
     file:close()
