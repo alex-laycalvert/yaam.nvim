@@ -3,6 +3,11 @@
 
 local Commands = {}
 
+local has_telescope, _ = pcall(require, 'telescope')
+if not has_telescope then
+    error('This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim')
+end
+
 Commands.commands = {
     'list',
     'add',

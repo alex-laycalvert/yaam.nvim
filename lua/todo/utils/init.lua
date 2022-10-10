@@ -142,4 +142,23 @@ Utils.read_todos = function (filename)
     return todos, num_todos
 end
 
+Utils.buf_write_todo = function (buf, todo, title)
+    local lines = {
+        '',
+        ' ' .. title,
+        '',
+    }
+    for _, v in pairs(todo.details) do
+        table.insert(lines, ' ' .. v)
+    end
+    if #todo.tasks > 0 then
+        table.insert(lines, '')
+        table.insert(lines, ' Tasks:')
+    end
+    for _, v in pairs(todo.tasks) do
+        table.insert(lines, ' - [ ] ' .. v)
+    end
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+end
+
 return Utils
