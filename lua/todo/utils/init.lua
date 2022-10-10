@@ -13,7 +13,11 @@ local Utils = {
             header = '^%- %[ %] *',
             project = '^ +%- *Project: *',
             detail = '^ +%- *',
-            task = '^ +%- *%[ %] *',
+            task_incomplete = '^ +%- *%[ %] *',
+            task_complete = '^ +%- *%[x%] *',
+            task_in_progress = '^ +%- *%[-%] *',
+            task_cancelled = '^ +%- *%[_%] *',
+            task_urgent = '^ +%- *%[%!%] *',
         },
     },
 }
@@ -86,7 +90,11 @@ Utils.read_todos = function (filename)
     local header_match = Utils.matches[setup.config.todo_file_type].header
     local project_match = Utils.matches[setup.config.todo_file_type].project
     local detail_match = Utils.matches[setup.config.todo_file_type].detail
-    local task_match = Utils.matches[setup.config.todo_file_type].task
+    local task_incomplete_match = Utils.matches[setup.config.todo_file_type].task_incomplete
+    local task_complete_match = Utils.matches[setup.config.todo_file_type].task_complete
+    local task_in_progress_match = Utils.matches[setup.config.todo_file_type].task_in_progress
+    local task_cancelled_match = Utils.matches[setup.config.todo_file_type].task_cancelled
+    local task_urgent_match = Utils.matches[setup.config.todo_file_type].task_urgent
     local contents = Utils.read_lines(filename)
     local num_todos = 0
     local todos = {}
@@ -127,9 +135,36 @@ Utils.read_todos = function (filename)
         elseif line:find(project_match) ~= nil then
             current_todo.project = line:
                 gsub(project_match, '')
-        elseif line:find(task_match) ~= nil then
-            local task = line:gsub(task_match, '')
-            table.insert(current_todo.tasks, task)
+        elseif line:find(task_incomplete_match) ~= nil then
+            local task = line:gsub(task_incomplete_match, '')
+            table.insert(current_todo.tasks, {
+                name = task,
+                status = 'INCOMPLETE'
+            })
+        elseif line:find(task_complete_match) ~= nil then
+            local task = line:gsub(task_complete_match, '')
+            table.insert(current_todo.tasks, {
+                name = task,
+                status = 'COMPLETE'
+            })
+        elseif line:find(task_in_progress_match) ~= nil then
+            local task = line:gsub(task_in_progress_match, '')
+            table.insert(current_todo.tasks, {
+                name = task,
+                status = 'IN_PROGRESS'
+            })
+        elseif line:find(task_cancelled_match) ~= nil then
+            local task = line:gsub(task_cancelled_match, '')
+            table.insert(current_todo.tasks, {
+                name = task,
+                status = 'CANCELLED'
+            })
+        elseif line:find(task_urgent_match) ~= nil then
+            local task = line:gsub(task_urgent_match, '')
+            table.insert(current_todo.tasks, {
+                name = task,
+                status = 'URGENT'
+            })
         elseif line:find(detail_match) ~= nil then
             local detail = line:gsub(detail_match, '')
             table.insert(current_todo.details, detail)

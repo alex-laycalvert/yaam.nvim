@@ -13,6 +13,7 @@ local finders = require('telescope.finders')
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local previewers = require('telescope.previewers')
+local preview_utils = require('telescope.previewers.utils')
 local conf = require('telescope.config').values
 
 Pickers.preview = defaulter(function (opts)
@@ -21,6 +22,8 @@ Pickers.preview = defaulter(function (opts)
             return opts.results
         end,
         define_preview = opts.define_preview or function (self, entry)
+            preview_utils.regex_highlighter(self.state.bufnr, 'todo')
+            -- vim.cmd('set ft=todo')
             utils.buf_write_todo(self.state.bufnr, entry.value, entry.display)
         end,
         dyn_title = opts.dyn_title or function (_, entry)

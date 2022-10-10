@@ -4,7 +4,7 @@
 local Calendar = {}
 
 Calendar.run = function ()
-    print("Showing Calendar...")
+    print('Showing Calendar...')
 end
 
 return Calendar
