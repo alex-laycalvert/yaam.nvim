@@ -1,10 +1,10 @@
 -- alex-laycalvert
--- https://github.com/alex-laycalvert/todo.nvim
+-- https://github.com/alex-laycalvert/yaam.nvim
 
 local Pickers = {}
 
-local utils = require('todo.utils')
-local setup = require('todo.setup')
+local utils = require('yaam.utils')
+local setup = require('yaam.setup')
 
 local telescope_utils = require('telescope.utils')
 local defaulter = telescope_utils.make_default_callable

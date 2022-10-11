@@ -1,6 +1,9 @@
-# todo.nvim
+# yaam.nvim
 
-A Neovim Lua plugin to keep track of due dates and other agenda items.
+yet another agenda manager
+
+A Neovim plugin written in Lua to help you manage you due
+dates and other TODO items.
 
 ## WORK IN PROGRESS
 

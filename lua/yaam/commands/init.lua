@@ -1,5 +1,5 @@
 -- alex-laycalvert
--- https://github.com/alex-laycalvert/todo.nvim
+-- https://github.com/alex-laycalvert/yaam.nvim
 
 local Commands = {}
 
@@ -19,7 +19,7 @@ Commands.commands = {
 }
 
 Commands.run = function (command)
-    require('todo.commands.' .. command).run()
+    require('yaam.commands.' .. command).run()
 end
 
 return Commands

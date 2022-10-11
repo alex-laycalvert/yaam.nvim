@@ -1,9 +1,9 @@
 -- alex-laycalvert
--- https://github.com/alex-laycalvert/todo.nvim
+-- https://github.com/alex-laycalvert/yaam.nvim
 
 local Windows = {}
 
-local utils = require('todo.utils')
+local utils = require('yaam.utils')
 
 Windows.open_buffer = function ()
     local buf = vim.api.nvim_create_buf(false, true)
@@ -28,7 +28,7 @@ Windows.open = function (height, width)
     return win, buf
 end
 
-Windows.close = function (win) 
+Windows.close = function (win)
     vim.api.nvim_win_close(win, true)
 end
 

@@ -1,5 +1,5 @@
 -- alex-laycalvert
--- https://github.com/alex-laycalvert/todo.nvim
+-- https://github.com/alex-laycalvert/yaam.nvim
 
 local Utils = {
     file_extensions = {
@@ -22,7 +22,7 @@ local Utils = {
     },
 }
 
-local setup = require('todo.setup')
+local setup = require('yaam.setup')
 
 Utils.map = function (tbl, f)
     local t = {}

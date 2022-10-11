@@ -1,11 +1,10 @@
 -- alex-laycalvert
--- https://github.com/alex-laycalvert/todo.nvim
+-- https://github.com/alex-laycalvert/yaam.nvim
 
 local List = {}
 
-local setup = require('todo.setup')
-local utils = require('todo.utils')
-local pickers = require('todo.pickers')
+local utils = require('yaam.utils')
+local pickers = require('yaam.pickers')
 
 List.run = function ()
     local todos, num_todos = utils.read_todos()

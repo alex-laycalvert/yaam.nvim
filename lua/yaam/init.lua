@@ -1,15 +1,15 @@
 -- alex-laycalvert
--- https://github.com/alex-laycalvert/todo.nvim
+-- https://github.com/alex-laycalvert/yaam.nvim
 
-local Todo = {}
+local Yaam = {}
 
-local commands = require('todo.commands')
-local setup = require('todo.setup')
-local utils = require('todo.utils')
+local commands = require('yaam.commands')
+local setup = require('yaam.setup')
+local utils = require('yaam.utils')
 
 local is_setup_complete = false
 
-Todo.setup = function (config)
+Yaam.setup = function (config)
     if not is_setup_complete then
         setup.setup(config)
     end
@@ -39,13 +39,13 @@ Todo.setup = function (config)
     file:close()
 end
 
-Todo.get_commands = function ()
+Yaam.get_commands = function ()
     return commands.commands
 end
 
-Todo.run_command = function (args)
+Yaam.run_command = function (args)
     if not is_setup_complete then
-        Todo.setup({})
+        Yaam.setup({})
     end
     if args == nil then
         args = 'help'
@@ -53,4 +53,4 @@ Todo.run_command = function (args)
     commands.run(args)
 end
 
-return Todo
+return Yaam
