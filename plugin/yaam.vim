@@ -11,4 +11,4 @@ function s:yaam_complete(args, line, pos)
     return join(l:candidates, "\n")
 endfunction
 
-command! -nargs=? -complete=custom,s:todo_complete Yaam lua require('yaam').run_command(<f-args>)
+command! -nargs=? -complete=custom,s:yaam_complete Yaam lua require('yaam').run_command(<f-args>)

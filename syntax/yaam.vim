@@ -8,9 +8,9 @@ syntax match TodoTaskInProgress '\v\[\-\]'
 syntax match TodoTaskCancelled '\v\[_\]'
 syntax match TodoTaskUrgent '\v\[\!\]'
 syntax match TodoDate '\v\d\d:\d\d:\d\d \d\d:\d\d'
-lua require('todo.setup').configure_task_highlights()
+lua require('yaam.setup').configure_task_highlights()
 
-let b:current_syntax = 'todo'
+let b:current_syntax = 'yaam'
 
 highlight TodoTaskIncomplete guifg=Red
 highlight TodoTaskComplete guifg=Green

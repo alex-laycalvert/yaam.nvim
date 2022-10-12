@@ -8,8 +8,8 @@ local Setup = {
     max_type_length = 0,
     defaults = {
         dir = home,
-        todo_filename = 'TODOS',
-        todo_file_type = 'markdown',
+        agenda_filename = 'TODOS',
+        agenda_file_type = 'markdown',
         todo_types = {
             'OVERDUE',
             'TODO',
@@ -20,6 +20,7 @@ local Setup = {
             'MEETING',
             'COMPLETE',
         },
+        todo_window_type = 'floating',
     },
 }
 

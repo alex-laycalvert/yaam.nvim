@@ -14,7 +14,7 @@ local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
 local previewers = require('telescope.previewers')
 local preview_utils = require('telescope.previewers.utils')
--- local conf = require('telescope.config').values
+local conf = require('telescope.config').values
 
 Pickers.preview = defaulter(function (opts)
     return previewers.new_buffer_previewer({
@@ -22,8 +22,8 @@ Pickers.preview = defaulter(function (opts)
             return opts.results
         end,
         define_preview = opts.define_preview or function (self, entry)
-            preview_utils.regex_highlighter(self.state.bufnr, 'todo')
-            utils.buf_write_todo(self.state.bufnr, entry.value, utils.format_todo_title(entry.value, 50))
+            preview_utils.regex_highlighter(self.state.bufnr, 'yaam')
+            utils.buf_write_todo(self.state.bufnr, entry.value, utils.format_todo_title(entry.value))
         end,
         dyn_title = opts.dyn_title or function (_, entry)
             return entry.value.name
@@ -36,7 +36,7 @@ Pickers.todo_picker = function (todos, action)
     for k, todo in pairs(todos) do
         results[k] = {
             todo = todo,
-            title = utils.format_todo_title(todo, 70)
+            title = utils.format_todo_title(todo, true, false)
         }
     end
 
@@ -55,7 +55,7 @@ Pickers.todo_picker = function (todos, action)
         previewer = Pickers.preview.new({
             results = results,
         }),
-        -- sorter = conf.generic_sorter(opts),
+        sorter = conf.generic_sorter({}),
         attach_mappings = function ()
             actions.select_default:replace(function (prompt_bufnr, map)
                 actions.close(prompt_bufnr)

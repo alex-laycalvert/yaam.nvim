@@ -16,8 +16,8 @@ Yaam.setup = function (config)
     is_setup_complete = true
     local filename =
         setup.config.dir .. '/' ..
-        setup.config.todo_filename ..
-        utils.file_extensions[setup.config.todo_file_type]
+        setup.config.agenda_filename ..
+        utils.file_extensions[setup.config.agenda_file_type]
     local file = io.open(filename, 'r')
     if file ~= nil then
         file:close()
@@ -35,7 +35,7 @@ Yaam.setup = function (config)
         return
     end
     io.output(file)
-    io.write(utils.file_headers[setup.config.todo_file_type])
+    io.write(utils.file_headers[setup.config.agenda_file_type])
     file:close()
 end
 

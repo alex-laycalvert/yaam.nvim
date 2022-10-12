@@ -10,7 +10,9 @@ local Utils = {
     },
     matches = {
         markdown = {
-            header = '^%- %[ %] *',
+            header = '^%- %[.%] *',
+            header_incomplete = '^%- %[ %] *',
+            header_complete = '^%- %[x%] *',
             project = '^ +%- *Project: *',
             detail = '^ +%- *',
             task_incomplete = '^ +%- *%[ %] *',
@@ -86,27 +88,40 @@ Utils.read_lines = function (filename)
     return lines
 end
 
-Utils.format_todo_title = function (todo, width)
-    local todo_lhs = Utils.concat_spaced(
-        todo.type, todo.name,
-        string.len(todo.name) + setup.max_type_length + 2
-    )
-    return Utils.concat_spaced(todo_lhs, todo.date, width)
+Utils.format_todo_title = function (todo, with_equal_spacing, with_date)
+    if with_date == nil then with_date = true end
+    if with_equal_spacing == nil then with_equal_spacing = false end
+    local title = todo.date
+    if not with_date then
+        title = todo.date:gsub(' .*', '')
+    end
+    title = title .. '  ' .. todo.type
+    if with_equal_spacing then
+        title =
+            title .. string.rep(
+                ' ',
+                setup.max_type_length - string.len(todo.type)
+            )
+    else
+    end
+    return title .. '  ' .. todo.name
 end
 
 Utils.read_todos = function ()
     local filename =
         setup.config.dir .. '/' ..
-        setup.config.todo_filename ..
-        Utils.file_extensions[setup.config.todo_file_type]
-    local header_match = Utils.matches[setup.config.todo_file_type].header
-    local project_match = Utils.matches[setup.config.todo_file_type].project
-    local detail_match = Utils.matches[setup.config.todo_file_type].detail
-    local task_incomplete_match = Utils.matches[setup.config.todo_file_type].task_incomplete
-    local task_complete_match = Utils.matches[setup.config.todo_file_type].task_complete
-    local task_in_progress_match = Utils.matches[setup.config.todo_file_type].task_in_progress
-    local task_cancelled_match = Utils.matches[setup.config.todo_file_type].task_cancelled
-    local task_urgent_match = Utils.matches[setup.config.todo_file_type].task_urgent
+        setup.config.agenda_filename ..
+        Utils.file_extensions[setup.config.agenda_file_type]
+    local header_match = Utils.matches[setup.config.agenda_file_type].header
+    local header_incomplete_match = Utils.matches[setup.config.agenda_file_type].header
+    local header_complete_match = Utils.matches[setup.config.agenda_file_type].header
+    local project_match = Utils.matches[setup.config.agenda_file_type].project
+    local detail_match = Utils.matches[setup.config.agenda_file_type].detail
+    local task_incomplete_match = Utils.matches[setup.config.agenda_file_type].task_incomplete
+    local task_complete_match = Utils.matches[setup.config.agenda_file_type].task_complete
+    local task_in_progress_match = Utils.matches[setup.config.agenda_file_type].task_in_progress
+    local task_cancelled_match = Utils.matches[setup.config.agenda_file_type].task_cancelled
+    local task_urgent_match = Utils.matches[setup.config.agenda_file_type].task_urgent
     local contents = Utils.read_lines(filename)
     local num_todos = 0
     local todos = {}
@@ -124,6 +139,7 @@ Utils.read_todos = function ()
                 num_todos = num_todos + 1
                 table.insert(todos, current_todo)
                 current_todo = {
+                    status = '',
                     type = '',
                     name = '',
                     date = '',
@@ -131,6 +147,11 @@ Utils.read_todos = function ()
                     details = {},
                     tasks = {},
                 }
+            end
+            if line:find(header_incomplete_match) ~= nil then
+                current_todo.status = 'INCOMPLETE'
+            else
+                current_todo.status = 'COMPLETE'
             end
             current_todo.type = line:
                 gsub(header_match, ''):
@@ -187,6 +208,33 @@ Utils.read_todos = function ()
         table.insert(todos, current_todo)
     end
     return todos, num_todos
+end
+
+Utils.item_height = function (todo)
+    local height = 1
+    local details_len = #todo.details
+    local tasks_len = #todo.tasks
+    if details_len > 0 then
+        height = height + 1 + details_len
+    end
+    if tasks_len > 0 then
+        height = height + 2 + tasks_len
+    end
+    return height
+end
+
+Utils.max_item_length = function (todo)
+    local title = Utils.format_todo_title(todo)
+    local max = string.len(title)
+    for _, v in pairs(todo.details) do
+        local len = string.len(v)
+        if len > max then max = len end
+    end
+    for _, v in pairs(todo.tasks) do
+        local len = string.len(v.name) + 6
+        if len > max then max = len end
+    end
+    return max
 end
 
 Utils.buf_write_todo = function (buf, todo, title)
